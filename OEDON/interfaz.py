@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Label
+from tkinter import ttk
 import cv2
 from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
@@ -7,10 +8,19 @@ from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import mysql.connector
 
+
 AREA_MIN = 20000  # Área mínima para detección (ajustar según resolución de cámara)
 AREA_MAX = 67600  # Área máxima para detección
 dimensiones_guardadas = []
 PIXEL_TO_MM = 0.01  # Factor de conversión de píxeles a milímetros
+
+def habilitar():
+    if check_variable.get():
+        boton_agregar_lote.config(state="normal")
+        textbox_lote_nuevo.config(state="normal")
+    else:
+        boton_agregar_lote.config(state="disabled")
+        textbox_lote_nuevo.config(state="disabled")
 
 def setup_database():
     conn = mysql.connector.connect(
@@ -118,13 +128,19 @@ if not cap.isOpened():
     print("No se pudo abrir la cámara")
     exit()
 
+
+
+# Botón para salir
+salir = tk.Button(inicio, text="Salir", command=inicio.quit)
+salir.pack(before=frame_camara, side=tk.LEFT,anchor="nw")
+
+
 # Crear un widget de etiqueta para mostrar el video
 lbl_video = Label(frame_camara)
 lbl_video.pack()
 
-# Botón para salir
-salir = tk.Button(inicio, text="Salir", command=inicio.quit)
-salir.pack()
+
+
 
 # Iniciar la visualización de la cámara
 camara_mostrar()
@@ -137,7 +153,18 @@ area_max = 67600  # Área máxima para detección
 dimensiones_guardadas = []  # Lista para guardar dimensiones
 #tiempo_inicio = time.time()  # Tiempo de inicio
 
+lits_lotes = []
+check_nuevo_lote = False
+check_variable = tk.BooleanVar()
 
+combox_lotes = ttk.Combobox(inicio)
+combox_lotes.pack(after=lbl_video)
+check_nuevo_lote = tk.Checkbutton(inicio, text="Nuevo lote", variable=check_variable, command=habilitar)
+check_nuevo_lote.pack(after=combox_lotes)
+textbox_lote_nuevo = ttk.Entry(inicio, state="disabled")
+textbox_lote_nuevo.pack(after=check_nuevo_lote)
+boton_agregar_lote = tk.Button(inicio, text="Agregar lote", state="disabled")
+boton_agregar_lote.pack(after=textbox_lote_nuevo)
 
 inicio.mainloop()
 
