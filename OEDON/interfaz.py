@@ -48,6 +48,16 @@ def obtener_datos():
     cursor.close()
     return data
 
+def lista_lotes():
+    cursor = conn.cursor()
+    query = """
+    
+    """
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+
 def actualizar(frame):
     datos = obtener_datos()
     if datos:
@@ -79,31 +89,7 @@ def camara_mostrar():
         lbl_video.imgtk = imgtk
         lbl_video.configure(image=imgtk)
     lbl_video.after(10, camara_mostrar)
-
-def getContours(img, area_min, area_max, pixel_to_mm):
-    dimensiones = []
-    contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-    for cnt in contours:
-        area = cv2.contourArea(cnt)
-        if area_min < area < area_max:  # Filtrar áreas
-            perimetro = cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, 0.02 * perimetro, True)
-            objCorner = len(approx)
-
-            if objCorner == 6:  # Hexágono detectado
-                x, y, w, h = cv2.boundingRect(approx)
-                ancho_mm = round(w * pixel_to_mm, 2)
-                alto_mm = round(h * pixel_to_mm, 2)
-                dimensiones.append((ancho_mm, alto_mm))  # Guardar dimensiones en mm
-                
-                # Dibujar en el frame
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                texto = f"W: {ancho_mm}mm, H: {alto_mm}mm"
-                cv2.putText(frame, texto, (x, y - 10), cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 0, 0), 2)
     
-    return dimensiones
-
 inicio = tk.Tk()
 inicio.title("Reconocedor de piezas")
 
